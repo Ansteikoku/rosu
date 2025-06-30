@@ -32,12 +32,11 @@
       margin-top: 10px;
       padding: 5px 10px;
     }
-    #status {
+    .error {
+      color: red;
       margin-top: 10px;
-      font-weight: bold;
     }
   </style>
-
   <script>
     if (!localStorage.getItem("wakakusa_logged_in")) {
       location.href = "login.html";
@@ -63,8 +62,7 @@
   <input type="text" id="name" placeholder="名前（省略可）">
   <textarea id="content" rows="3" placeholder="スレッド本文"></textarea>
   <button onclick="createThread()">スレッドを立てる</button>
-
-  <div id="status"></div>
+  <div id="error" class="error"></div>
 
   <hr>
   <h2>■ スレッド一覧</h2>
@@ -82,15 +80,15 @@
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        alert("スレッドの読み込みに失敗しました");
+      const list = document.getElementById("threadList");
+      if (error || !data) {
+        list.innerHTML = "スレッドの読み込みに失敗しました。";
         return;
       }
 
-      const list = document.getElementById("threadList");
       list.innerHTML = data.map((t, i) =>
         `<div class="thread">
-          <a href="thread.html?id=${t.id}">${i+1}: ${t.content.slice(0, 30)}...</a>
+          <a href="thread.html?id=${t.id}">${i + 1}: ${t.content.slice(0, 30)}...</a>
         </div>`
       ).join("") || "スレッドはまだありません。";
     }
@@ -98,14 +96,13 @@
     async function createThread() {
       const name = document.getElementById("name").value || "名無しさん";
       const content = document.getElementById("content").value.trim();
-      const status = document.getElementById("status");
-      status.style.color = "gray";
+      const errorDiv = document.getElementById("error");
+      errorDiv.textContent = "";
+
       if (!content) {
-        alert("本文を入力してください");
+        errorDiv.textContent = "本文を入力してください。";
         return;
       }
-
-      status.textContent = "スレッド作成中...";
 
       const { data, error } = await supabase
         .from("threads")
@@ -114,12 +111,10 @@
         .single();
 
       if (error) {
-        status.textContent = "スレッド作成に失敗しました: " + error.message;
-        status.style.color = "red";
+        errorDiv.textContent = "スレッド作成に失敗しました: " + error.message;
         return;
       }
 
-      // 成功したら次のページへ
       location.href = `thread.html?id=${data.id}`;
     }
 
