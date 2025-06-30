@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ログイン - わかくさ掲示板</title>
+  <style>
+    body {
+      font-family: "MS PGothic", sans-serif;
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+    }
+    h1 {
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+    }
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>ログイン</h1>
+  <p>パスワードを入力してください。</p>
+  <input type="password" id="password" placeholder="パスワード">
+  <button onclick="login()">ログイン</button>
+  <div class="error" id="error"></div>
+
+  <script>
+    const CORRECT_PASSWORD = "wakakusa";
+
+    function login() {
+      const pw = document.getElementById("password").value;
+      if (pw === CORRECT_PASSWORD) {
+        localStorage.setItem("wakakusa_logged_in", "true");
+        location.href = "index.html";
+      } else {
+        document.getElementById("error").textContent = "パスワードが間違っています。";
+      }
+    }
+  </script>
+</body>
+</html>
