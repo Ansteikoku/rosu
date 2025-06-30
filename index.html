@@ -32,9 +32,9 @@
       margin-top: 10px;
       padding: 5px 10px;
     }
-    #logArea {
-      color: green;
-      margin-bottom: 10px;
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 
@@ -57,13 +57,14 @@
   </script>
 
   <h1>わかくさ掲示板</h1>
-  <div id="logArea"></div> <!-- ログ出力エリア -->
   <hr>
 
   <h2>■ 新規スレッド作成</h2>
   <input type="text" id="name" placeholder="名前（省略可）">
   <textarea id="content" rows="3" placeholder="スレッド本文"></textarea>
   <button onclick="createThread()">スレッドを立てる</button>
+
+  <div id="status"></div>
 
   <hr>
   <h2>■ スレッド一覧</h2>
@@ -75,12 +76,6 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmYWFtbWRiY294eW1wYnRmd3FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyNjcxNjYsImV4cCI6MjA2Njg0MzE2Nn0.uCJM5KdIbDZuHaIfBg3SewklRnVg12UcklhaewgIsuc";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function showLog(message, isError = false) {
-      const logDiv = document.getElementById("logArea");
-      logDiv.style.color = isError ? "red" : "green";
-      logDiv.textContent = message;
-    }
-
     async function renderThreads() {
       const { data, error } = await supabase
         .from("threads")
@@ -88,7 +83,7 @@
         .order("created_at", { ascending: false });
 
       if (error) {
-        showLog("スレッドの読み込みに失敗しました", true);
+        alert("スレッドの読み込みに失敗しました");
         return;
       }
 
@@ -103,13 +98,14 @@
     async function createThread() {
       const name = document.getElementById("name").value || "名無しさん";
       const content = document.getElementById("content").value.trim();
-
+      const status = document.getElementById("status");
+      status.style.color = "gray";
       if (!content) {
         alert("本文を入力してください");
         return;
       }
 
-      showLog("スレッド作成中...");
+      status.textContent = "スレッド作成中...";
 
       const { data, error } = await supabase
         .from("threads")
@@ -118,11 +114,12 @@
         .single();
 
       if (error) {
-        showLog("エラー: " + error.message, true);
+        status.textContent = "スレッド作成に失敗しました: " + error.message;
+        status.style.color = "red";
         return;
       }
 
-      showLog("作成成功！スレッドに移動します...");
+      // 成功したら次のページへ
       location.href = `thread.html?id=${data.id}`;
     }
 
