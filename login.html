@@ -2,50 +2,54 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ログイン - わかくさ掲示板</title>
+  <title>わかくさ掲示板 - ログイン</title>
   <style>
     body {
       font-family: "MS PGothic", sans-serif;
-      max-width: 400px;
+      max-width: 500px;
       margin: auto;
       padding: 20px;
-      background: #fff;
-    }
-    h1 {
+      background-color: #fff;
       text-align: center;
     }
-    input {
+    h1 {
+      font-size: 24px;
+    }
+    input[type="password"] {
+      font-family: "MS PGothic", sans-serif;
       width: 100%;
-      padding: 10px;
+      padding: 5px;
       margin: 10px 0;
     }
     button {
-      padding: 10px;
-      width: 100%;
+      padding: 5px 10px;
     }
-    .error {
+    #error {
       color: red;
-      text-align: center;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>ログイン</h1>
-  <p>パスワードを入力してください。</p>
-  <input type="password" id="password" placeholder="パスワード">
+
+  <h1>わかくさ掲示板 ログイン</h1>
+
+  <input type="password" id="password" placeholder="パスワードを入力">
+  <br>
   <button onclick="login()">ログイン</button>
-  <div class="error" id="error"></div>
+
+  <div id="error"></div>
 
   <script>
-    const CORRECT_PASSWORD = "wakakusa";
-
     function login() {
       const pw = document.getElementById("password").value;
-      if (pw === CORRECT_PASSWORD) {
-        localStorage.setItem("wakakusa_logged_in", "true");
+      const error = document.getElementById("error");
+
+      if (pw === "wakakusa") {
+        localStorage.setItem("wakakusa_logged_in", "1");
         location.href = "index.html";
       } else {
-        document.getElementById("error").textContent = "パスワードが間違っています。";
+        error.textContent = "パスワードが違います";
       }
     }
   </script>
